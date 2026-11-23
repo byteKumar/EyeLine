@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EyeLine · a teleprompter under your camera</title>
+<meta name="description" content="EyeLine is a free Mac teleprompter that hangs from the notch, right under your camera. Hidden from screen shares, with a glow that follows your voice.">
+<meta property="og:title" content="EyeLine · a teleprompter under your camera">
+<meta property="og:description" content="Read your script while looking your audience in the eye. Free for macOS.">
+<meta property="og:image" content="https://bytekumar.github.io/EyeLine/preview.png">
+<link rel="icon" href="icon.png">
+<style>
+  :root {
+    --bg: #0b0b0d; --panel: #141418; --line: #26262c; --text: #f3f1ec; --muted: #9b9890;
+    --warm: #ffd98a; --warm-deep: #ff9f45;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 17px/1.55 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+  }
+  a { color: inherit; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+
+  header { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 650; text-decoration: none; letter-spacing: -0.01em; }
+  .brand img { width: 30px; height: 30px; }
+  header nav a { color: var(--muted); text-decoration: none; font-size: 15px; margin-left: 22px; }
+  header nav a:hover { color: var(--text); }
+
+  .hero { text-align: center; padding: 64px 0 40px; }
+  h1 { font-size: clamp(38px, 6.4vw, 68px); line-height: 1.04; letter-spacing: -0.035em; margin: 0 auto 20px; max-width: 13ch; font-weight: 700; }
+  .lede { color: var(--muted); font-size: clamp(17px, 2.1vw, 20px); max-width: 34em; margin: 0 auto 34px; }
+  .cta { display: inline-flex; align-items: center; gap: 10px; background: var(--text); color: #111; text-decoration: none;
+         font-weight: 650; padding: 14px 26px; border-radius: 999px; transition: transform .15s ease, box-shadow .2s ease; }
+  .cta:hover { transform: translateY(-1px); box-shadow: 0 10px 40px -10px rgba(255, 217, 138, .55); }
+  .cta svg { width: 18px; height: 18px; }
+  .fine { color: var(--muted); font-size: 14px; margin-top: 14px; }
+
+  /* The demo: a laptop lid with the prompter hanging from the notch. */
+  .stage { margin: 56px auto 0; max-width: 760px; aspect-ratio: 16 / 7; border-radius: 22px 22px 0 0;
+           background: linear-gradient(180deg, #2a2b31, #17171b 70%); border: 1px solid var(--line); border-bottom: 0;
+           position: relative; overflow: hidden; }
+  .notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: min(78%, 430px); height: 72%;
+           background: #000; border-radius: 0 0 26px 26px; overflow: hidden; }
+  .cam { position: absolute; top: 9px; left: 50%; width: 9px; height: 9px; margin-left: -4.5px; border-radius: 50%;
+         background: radial-gradient(circle, #36506f 35%, #1c1c20 40%); }
+  .script { position: absolute; inset: 34px 28px 18px; overflow: hidden; text-align: center; font-weight: 600;
+            font-size: clamp(13px, 2vw, 18px); line-height: 1.5;
+            mask-image: linear-gradient(transparent, #000 14%, #000 80%, transparent);
+            -webkit-mask-image: linear-gradient(transparent, #000 14%, #000 80%, transparent); }
+  .script p { margin: 0 0 .9em; animation: roll 26s linear infinite; }
+  @keyframes roll { from { transform: translateY(0); } to { transform: translateY(-62%); } }
+  .glow { position: absolute; left: 8%; right: 8%; bottom: -40%; height: 70%; border-radius: 50%; pointer-events: none;
+          background: radial-gradient(closest-side, rgba(255, 217, 138, .9), rgba(255, 159, 69, .35) 55%, transparent);
+          filter: blur(14px); mix-blend-mode: screen; animation: speak 3.2s ease-in-out infinite; }
+  @keyframes speak {
+    0%, 100% { opacity: .15; transform: translateY(18%) scaleY(.7); }
+    18% { opacity: .9; transform: translateY(0) scaleY(1); }
+    34% { opacity: .55; transform: translateY(8%) scaleY(.9); }
+    52% { opacity: .95; transform: translateY(-2%) scaleY(1.05); }
+    74% { opacity: .2; transform: translateY(16%) scaleY(.75); }
+  }
+  @media (prefers-reduced-motion: reduce) { .script p, .glow { animation: none; } .glow { opacity: .6; } }
+
+  section { padding: 80px 0; border-top: 1px solid var(--line); }
+  h2 { font-size: clamp(28px, 4vw, 40px); letter-spacing: -0.03em; line-height: 1.1; margin: 0 0 40px; max-width: 18ch; }
+  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+  .grid > div { background: var(--panel); padding: 30px 28px; }
+  .grid h3 { margin: 0 0 8px; font-size: 18px; letter-spacing: -0.01em; }
+  .grid p { margin: 0; color: var(--muted); font-size: 16px; }
+  .grid .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--warm); margin-right: 10px; vertical-align: middle; box-shadow: 0 0 12px var(--warm-deep); }
+
+  ol.steps { list-style: none; counter-reset: s; padding: 0; margin: 0; display: grid; gap: 18px; max-width: 680px; }
+  ol.steps li { counter-increment: s; display: grid; grid-template-columns: 40px 1fr; gap: 14px; align-items: start; color: var(--muted); }
+  ol.steps li::before { content: counter(s); width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line);
+                        display: grid; place-items: center; color: var(--text); font-weight: 600; font-size: 15px; }
+  ol.steps b { color: var(--text); font-weight: 600; }
+  code { font: 14px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--panel); border: 1px solid var(--line); padding: 2px 7px; border-radius: 6px; color: var(--text); word-break: break-all; }
+
+  footer { border-top: 1px solid var(--line); padding: 34px 0 48px; color: var(--muted); font-size: 14px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+  @media (max-width: 640px) {
+    .wrap { padding: 0 16px; }
+    header nav a:first-child { display: none; }
+    .hero { padding-top: 36px; }
+    .grid { grid-template-columns: 1fr; }
+    section { padding: 56px 0; }
+    .stage { aspect-ratio: 4 / 3; }
+    .notch { width: 88%; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="brand" href="./"><img src="icon.png" alt="">EyeLine</a>
+    <nav>
+      <a href="#install">Install</a>
+      <a href="https://github.com/byteKumar/EyeLine">GitHub</a>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <h1>Read your script. Keep your eyes on them.</h1>
+    <p class="lede">EyeLine is a teleprompter that hangs from your MacBook's notch, right under the camera. Your audience sees you looking at them. They never see the script.</p>
+    <a class="cta" href="https://github.com/byteKumar/EyeLine/releases/latest/download/EyeLine.dmg">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0 4.5-4.5M12 15l-4.5-4.5M5 20h14"/></svg>
+      Download for Mac
+    </a>
+    <p class="fine">Free and open source · macOS 14 or later · Apple silicon and Intel</p>
+
+    <div class="stage" aria-label="Animated preview of the prompter under the camera">
+      <div class="notch">
+        <span class="cam"></span>
+        <div class="glow"></div>
+        <div class="script">
+          <p>Hi everyone, thanks for joining.</p>
+          <p>Today I want to walk you through three things we shipped this month.</p>
+          <p>First, the new onboarding flow. Sign-ups are up and drop-off is down.</p>
+          <p>Second, the faster search. Results now load in under a second.</p>
+          <p>And third, the part I'm most excited about.</p>
+          <p>Let me share my screen.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <h2>Everything a prompter needs, nothing in your way.</h2>
+    <div class="grid">
+      <div><h3><span class="dot"></span>Right under the lens</h3><p>The panel grows out of the notch, so the words sit next to your camera and your gaze stays on the call.</p></div>
+      <div><h3><span class="dot"></span>Hidden when you share</h3><p>It asks macOS to keep it out of screen capture. Share your screen or record a video and the prompter isn't in it.</p></div>
+      <div><h3><span class="dot"></span>A glow that listens</h3><p>Soft light at the bottom rises as you speak and fades when you pause. Only loudness is measured; nothing is recorded.</p></div>
+      <div><h3><span class="dot"></span>Moves at your pace</h3><p>Pick a speed, or let it scroll only while you talk. Click to pause, scroll to rewind, drag the corner to resize.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <h2>Install in a minute.</h2>
+    <ol class="steps">
+      <li><span><b>Download</b> <a href="https://github.com/byteKumar/EyeLine/releases/latest/download/EyeLine.dmg">EyeLine.dmg</a>, open it and drag EyeLine into Applications.</span></li>
+      <li><span><b>Open it once.</b> This early build isn't notarized by Apple yet, so macOS will stop it. Go to System Settings, then Privacy &amp; Security, and click <b>Open Anyway</b>. Or run <code>xattr -dr com.apple.quarantine /Applications/EyeLine.app</code></span></li>
+      <li><span><b>Allow the microphone</b> for the voice glow, then paste your script from the menu bar icon.</span></li>
+    </ol>
+  </div>
+</section>
+
+<div class="wrap">
+  <footer>
+    <span>EyeLine · MIT licensed</span>
+    <span><a href="https://github.com/byteKumar/EyeLine">Source on GitHub</a> · <a href="https://github.com/byteKumar/EyeLine/releases">Releases</a></span>
+  </footer>
+</div>
+</body>
+</html>

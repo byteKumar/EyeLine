@@ -1,0 +1,45 @@
+name: Build and release
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Tests
+        run: swift test
+
+      - name: Build app, zip and dmg
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/v* ]]; then export VERSION="${GITHUB_REF_NAME#v}"; fi
+          ./scripts/build-app.sh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: EyeLine
+          path: |
+            dist/EyeLine.dmg
+            dist/EyeLine.zip
+
+      - name: Publish GitHub release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" dist/EyeLine.dmg dist/EyeLine.zip --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" dist/EyeLine.dmg dist/EyeLine.zip \
+              --title "EyeLine $GITHUB_REF_NAME" --notes-file .github/release-notes.md
+          fi
