@@ -20,7 +20,7 @@ enum Snapshot {
         let view = PrompterView(model: model, onResizeDrag: {}, alwaysShowControls: true)
             .frame(width: model.size.width, height: model.size.height)
             .padding(30)
-            .background(Color(white: 0.55))
+            .background(Color.clear)
         let renderer = ImageRenderer(content: view)
         renderer.scale = 2
         guard let image = renderer.nsImage, let tiff = image.tiffRepresentation,

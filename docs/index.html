@@ -1,161 +1,589 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-type="software" data-radius="round" data-ground="sand" data-buttons="solid" data-motion>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>EyeLine · a teleprompter under your camera</title>
-<meta name="description" content="EyeLine is a free Mac teleprompter that hangs from the notch, right under your camera. Hidden from screen shares, with a glow that follows your voice.">
-<meta property="og:title" content="EyeLine · a teleprompter under your camera">
-<meta property="og:description" content="Read your script while looking your audience in the eye. Free for macOS.">
-<meta property="og:image" content="https://bytekumar.github.io/EyeLine/preview.png">
-<link rel="icon" href="icon.png">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>EyeLine: a teleprompter for Mac that sits under the camera</title>
+<meta name="description" content="EyeLine hangs your script from the MacBook notch, right below the lens, hidden from screen shares, with a glow that follows your voice. Free for macOS 14 and later.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="EyeLine: a teleprompter for Mac that sits under the camera">
+<meta property="og:description" content="Read your script while looking into the lens. Free, 790 KB, macOS 14 or later.">
+<meta property="og:image" content="https://bytekumar.github.io/EyeLine/share.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="icon.png" type="image/png">
+<meta name="theme-color" content="#0c0b0a">
+<link rel="canonical" href="https://bytekumar.github.io/EyeLine/">
+<meta name="site-kind" content="software">
+<meta name="page-type" content="software">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Geist+Mono:wght@400..500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/system.css">
+<link rel="stylesheet" href="assets/ui/cards.css">
+<link rel="stylesheet" href="assets/motion/motion.css">
+<link rel="stylesheet" href="assets/backgrounds/backgrounds.css">
+<link rel="stylesheet" href="assets/layout/layout.css">
+<link rel="stylesheet" href="assets/icons/icon.css">
 <style>
-  :root {
-    --bg: #0b0b0d; --panel: #141418; --line: #26262c; --text: #f3f1ec; --muted: #9b9890;
-    --warm: #ffd98a; --warm-deep: #ff9f45;
-  }
-  * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
-  body {
-    margin: 0; background: var(--bg); color: var(--text);
-    font: 17px/1.55 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
-  }
-  a { color: inherit; }
-  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+:root {
+  --p-bg: #0c0b0a; --p-surface: #16140f; --p-ink: #f3efe7; --p-muted: #898681;
+  --p-accent: #ffc35c; --p-accent-ink: #0c0b0a; --p-action: #ffc35c; --p-action-ink: #0c0b0a;
+  --p-inv-bg: #f3efe7; --p-inv-surface: #e0dcd5; --p-inv-ink: #0c0b0a; --p-inv-muted: #585653;
+  --p-inv-accent: #0c0b0a; --p-inv-accent-ink: #f3efe7; --p-inv-action: #0c0b0a; --p-inv-action-ink: #f3efe7;
+  --font-display: "Geist", system-ui, sans-serif;
+  --font-text: "Geist", system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --display-weight: 500;
+  --display-tracking: -0.035em;
+  --display-tracking-xl: -0.045em;
+}
+</style>
+<link rel="stylesheet" href="assets/ui/base.css">
+<link rel="stylesheet" href="assets/ui/toggles/fragment.css">
+<link rel="stylesheet" href="assets/ui/slider/fragment.css">
+<script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
+<script src="assets/backgrounds/backgrounds.js"></script>
+<script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
+<link rel="modulepreload" href="assets/moments/moments.js">
+<link rel="modulepreload" href="assets/moments/lib.js">
+<link rel="modulepreload" href="assets/moments/liquid-type/moment.js">
+<style>
+/* ---------- Glass layer (the client asked for a glass look; see the report) ---------- */
+:root {
+  --glass-fill: linear-gradient(160deg, rgb(255 255 255 / .11), rgb(255 255 255 / .035) 55%, rgb(255 255 255 / .06));
+  --glass-line: rgb(255 255 255 / .14);
+  --glass-hi: inset 0 1px 0 rgb(255 255 255 / .22), inset 0 0 0 1px rgb(255 255 255 / .04);
+  --glass-drop: 0 30px 80px -40px rgb(0 0 0 / .85);
+  --glass-blur: blur(22px) saturate(170%);
+  --amber: #ffc35c; --amber-deep: #ff8a2a;
+}
+.glass { background: var(--glass-fill); border: 1px solid var(--glass-line); box-shadow: var(--glass-hi), var(--glass-drop);
+  -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); }
+header.nav { background: rgb(12 11 10 / .62); -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%); border-bottom-color: rgb(255 255 255 / .08); }
+.nav__menu { background: rgb(20 18 15 / .82); -webkit-backdrop-filter: blur(24px) saturate(160%); backdrop-filter: blur(24px) saturate(160%); }
 
-  header { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; }
-  .brand { display: flex; align-items: center; gap: 10px; font-weight: 650; text-decoration: none; letter-spacing: -0.01em; }
-  .brand img { width: 30px; height: 30px; }
-  header nav a { color: var(--muted); text-decoration: none; font-size: 15px; margin-left: 22px; }
-  header nav a:hover { color: var(--text); }
+/* the ambient light the glass sits on: two soft pools of the product's own amber glow */
+#app::before, #features::before, #questions::before { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background: radial-gradient(40% 45% at 12% 45%, rgb(255 150 50 / .22), transparent 70%), radial-gradient(34% 40% at 90% 78%, rgb(255 205 120 / .16), transparent 70%); }
+.section { position: relative; }
+.section > .wrap { position: relative; z-index: 1; }
 
-  .hero { text-align: center; padding: 64px 0 40px; }
-  h1 { font-size: clamp(38px, 6.4vw, 68px); line-height: 1.04; letter-spacing: -0.035em; margin: 0 auto 20px; max-width: 13ch; font-weight: 700; }
-  .lede { color: var(--muted); font-size: clamp(17px, 2.1vw, 20px); max-width: 34em; margin: 0 auto 34px; }
-  .cta { display: inline-flex; align-items: center; gap: 10px; background: var(--text); color: #111; text-decoration: none;
-         font-weight: 650; padding: 14px 26px; border-radius: 999px; transition: transform .15s ease, box-shadow .2s ease; }
-  .cta:hover { transform: translateY(-1px); box-shadow: 0 10px 40px -10px rgba(255, 217, 138, .55); }
-  .cta svg { width: 18px; height: 18px; }
-  .fine { color: var(--muted); font-size: 14px; margin-top: 14px; }
+/* ---------- The prompter, drawn live (hero, app window, cards) ---------- */
+.pm { --pm-w: 420px; --pm-h: 210px; --pm-fs: 17px; position: absolute; top: 0; left: 50%; translate: -50% 0;
+  width: min(var(--pm-w), 86%); height: var(--pm-h); background: #000; border-radius: 0 0 26px 26px; overflow: hidden; z-index: 2;
+  box-shadow: 0 0 0 1px rgb(255 255 255 / .05), 0 40px 90px -30px rgb(255 150 40 / .45); }
+.pm__cam { position: absolute; top: 9px; left: 50%; width: 9px; height: 9px; margin-left: -4.5px; border-radius: 50%; background: radial-gradient(circle, #3b5876 34%, #17171b 40%); }
+.pm__text { position: absolute; inset: 36px 26px 14px; overflow: hidden; text-align: center; color: #fff;
+  font: 500 var(--pm-fs)/1.45 var(--font-text); letter-spacing: -0.005em;
+  -webkit-mask-image: linear-gradient(transparent, #000 16%, #000 78%, transparent); mask-image: linear-gradient(transparent, #000 16%, #000 78%, transparent); }
+.pm__roll p { margin: 0 0 .7em; }
+.pm__roll { animation: pm-roll 30s linear infinite; }
+@keyframes pm-roll { from { transform: translateY(0); } to { transform: translateY(-58%); } }
+.pm__glow { position: absolute; left: 6%; right: 6%; bottom: -46%; height: 82%; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(closest-side, rgb(255 219 138 / .95), rgb(255 150 60 / .38) 55%, transparent); filter: blur(16px); mix-blend-mode: screen;
+  animation: pm-speak 3.4s ease-in-out infinite; }
+@keyframes pm-speak {
+  0%, 100% { opacity: .35; transform: translateY(14%) scaleY(.8); }
+  16% { opacity: .9; transform: translateY(0) scaleY(1); }
+  32% { opacity: .55; transform: translateY(7%) scaleY(.9); }
+  50% { opacity: .95; transform: translateY(-2%) scaleY(1.05); }
+  72% { opacity: .38; transform: translateY(12%) scaleY(.82); }
+}
+.is-paused .pm__roll, .is-paused .pm__glow, .is-paused .meter i { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .pm__roll, .pm__glow, .meter i { animation: none; } .pm__glow { opacity: .7; } }
+.pm-pause { position: absolute; right: 16px; bottom: 16px; z-index: 4; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; color: var(--ink); cursor: pointer; }
+.pm-pause svg { width: 14px; height: 14px; fill: currentColor; }
 
-  /* The demo: a laptop lid with the prompter hanging from the notch. */
-  .stage { margin: 56px auto 0; max-width: 760px; aspect-ratio: 16 / 7; border-radius: 22px 22px 0 0;
-           background: linear-gradient(180deg, #2a2b31, #17171b 70%); border: 1px solid var(--line); border-bottom: 0;
-           position: relative; overflow: hidden; }
-  .notch { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: min(78%, 430px); height: 72%;
-           background: #000; border-radius: 0 0 26px 26px; overflow: hidden; }
-  .cam { position: absolute; top: 9px; left: 50%; width: 9px; height: 9px; margin-left: -4.5px; border-radius: 50%;
-         background: radial-gradient(circle, #36506f 35%, #1c1c20 40%); }
-  .script { position: absolute; inset: 34px 28px 18px; overflow: hidden; text-align: center; font-weight: 600;
-            font-size: clamp(13px, 2vw, 18px); line-height: 1.5;
-            mask-image: linear-gradient(transparent, #000 14%, #000 80%, transparent);
-            -webkit-mask-image: linear-gradient(transparent, #000 14%, #000 80%, transparent); }
-  .script p { margin: 0 0 .9em; animation: roll 26s linear infinite; }
-  @keyframes roll { from { transform: translateY(0); } to { transform: translateY(-62%); } }
-  .glow { position: absolute; left: 8%; right: 8%; bottom: -40%; height: 70%; border-radius: 50%; pointer-events: none;
-          background: radial-gradient(closest-side, rgba(255, 217, 138, .9), rgba(255, 159, 69, .35) 55%, transparent);
-          filter: blur(14px); mix-blend-mode: screen; animation: speak 3.2s ease-in-out infinite; }
-  @keyframes speak {
-    0%, 100% { opacity: .15; transform: translateY(18%) scaleY(.7); }
-    18% { opacity: .9; transform: translateY(0) scaleY(1); }
-    34% { opacity: .55; transform: translateY(8%) scaleY(.9); }
-    52% { opacity: .95; transform: translateY(-2%) scaleY(1.05); }
-    74% { opacity: .2; transform: translateY(16%) scaleY(.75); }
-  }
-  @media (prefers-reduced-motion: reduce) { .script p, .glow { animation: none; } .glow { opacity: .6; } }
+/* ---------- Hero ---------- */
+.hero__media.hero-screen { background: #120d08; isolation: isolate; }
+.hero-screen > [data-fx] { position: absolute; inset: 0; z-index: 0; }
+.menubar { position: absolute; inset: 0 0 auto 0; height: 30px; z-index: 1; display: flex; align-items: center; justify-content: space-between; padding: 0 16px;
+  font: 500 13px/1 var(--font-text); color: rgb(255 255 255 / .86); border-width: 0 0 1px 0; border-radius: 0; box-shadow: none; }
+.menubar span + span { margin-left: 16px; }
+.hero-screen .pm { --pm-h: min(250px, 38%); --pm-fs: clamp(14px, 1.25vw, 18px); }
+.hero-screen .pm-pause { right: 76px; }
+.slidewin { position: absolute; left: 9%; right: 9%; top: 47%; bottom: 13%; z-index: 1; border-radius: 14px; overflow: hidden; color: #fff; }
+.slidewin__bar { display: flex; gap: 7px; align-items: center; height: 30px; padding: 0 12px; border-bottom: 1px solid var(--glass-line); font: 500 12px/1 var(--font-text); color: rgb(255 255 255 / .75); }
+.slidewin__bar i { width: 10px; height: 10px; border-radius: 50%; background: rgb(255 255 255 / .3); }
+.slidewin__bar b { margin-left: 8px; font-weight: 500; }
+.slidewin__body { padding: 7% 8%; display: grid; gap: 12px; }
+.slidewin__body strong { font: var(--display-weight) clamp(18px, 2.2vw, 32px)/1.1 var(--font-display); letter-spacing: -0.03em; }
+.slidewin__body span { display: block; height: 8px; border-radius: 4px; background: rgb(255 255 255 / .28); width: 62%; }
+.slidewin__body span + span { width: 44%; }
+@media (max-width: 1023px) { .slidewin { top: 52%; bottom: 8%; } }
+@media (max-width: 639px) { .slidewin { display: none; } }
+.hero-screen .ly-float { z-index: 3; background: rgb(16 10 5 / .62); border: 1px solid var(--glass-line); box-shadow: var(--glass-hi), var(--glass-drop);
+  -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); color: #fff; }
+.hero-screen .ly-float__row { color: rgb(255 255 255 / .9); }
+.ly-live::before { background: var(--amber) !important; }
 
-  section { padding: 80px 0; border-top: 1px solid var(--line); }
-  h2 { font-size: clamp(28px, 4vw, 40px); letter-spacing: -0.03em; line-height: 1.1; margin: 0 0 40px; max-width: 18ch; }
-  .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
-  .grid > div { background: var(--panel); padding: 30px 28px; }
-  .grid h3 { margin: 0 0 8px; font-size: 18px; letter-spacing: -0.01em; }
-  .grid p { margin: 0; color: var(--muted); font-size: 16px; }
-  .grid .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--warm); margin-right: 10px; vertical-align: middle; box-shadow: 0 0 12px var(--warm-deep); }
+/* ---------- App window (macOS vibrancy is real glass) ---------- */
+.app.ui { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); margin-top: var(--s-7); border-radius: var(--u-r, 16px); overflow: hidden;
+  background: var(--glass-fill); border: 1px solid var(--glass-line); box-shadow: var(--glass-hi), var(--glass-drop); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); }
+.app > .app__pane { position: relative; min-width: 0; min-height: 0; overflow: hidden; }
+.app > .app__pane + .app__pane { border-left: 1px solid var(--glass-line); }
+.set { padding: 0 24px 24px; color: var(--ink); font: 400 14px/1.45 var(--font-text); }
+.set__bar { display: flex; align-items: center; gap: 8px; height: 44px; margin: 0 -24px 16px; padding: 0 16px; border-bottom: 1px solid var(--glass-line); }
+.set__bar i { width: 12px; height: 12px; border-radius: 50%; background: #ff5f57; } .set__bar i:nth-child(2) { background: #febc2e; } .set__bar i:nth-child(3) { background: #28c840; }
+.set__bar b { flex: 1; text-align: center; font-weight: 500; font-size: 13px; margin-right: 52px; color: rgb(243 239 231 / .8); }
+.set__head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+.set__head strong { font-weight: 500; font-size: 15px; }
+.set__head span { font-size: 13px; color: #b9b4aa; }
+.set__doc { padding: 4px 0 0; height: 168px; overflow: hidden; font-size: 14px; color: rgb(243 239 231 / .92);
+  -webkit-mask-image: linear-gradient(#000 70%, transparent); mask-image: linear-gradient(#000 70%, transparent); }
+.set__doc p { margin: 0 0 .6em; }
+.set__btns { display: flex; gap: 8px; margin: 14px 0 18px; }
+.set__btns span { padding: 5px 12px; border-radius: 7px; background: rgb(255 255 255 / .1); border: 1px solid rgb(255 255 255 / .1); font-size: 13px; }
+.set__btns span:first-child { background: var(--amber); color: #0c0b0a; border-color: transparent; }
+.set__row { display: grid; grid-template-columns: 96px 1fr 56px; align-items: center; gap: 12px; height: 34px; font-size: 13px; }
+.set__row em { font-style: normal; text-align: right; color: #b9b4aa; font-family: var(--font-mono); font-size: 12px; }
+.trk { position: relative; height: 4px; border-radius: 4px; background: rgb(255 255 255 / .14); }
+.trk::before { content: ""; position: absolute; inset: 0 auto 0 0; width: var(--v); border-radius: 4px; background: var(--amber); }
+.trk::after { content: ""; position: absolute; top: 50%; left: var(--v); width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; background: #fff; box-shadow: 0 1px 4px rgb(0 0 0 / .4); }
+.set__tg { display: flex; justify-content: space-between; align-items: center; height: 36px; border-top: 1px solid rgb(255 255 255 / .07); font-size: 13px; }
+.sw { width: 30px; height: 18px; border-radius: 9px; background: rgb(255 255 255 / .18); position: relative; flex: none; }
+.sw::after { content: ""; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: #fff; }
+.sw.on { background: #34c759; } .sw.on::after { left: 14px; }
+.app__pane--open { background: radial-gradient(120% 90% at 50% 0%, #3a2610 0%, #1a120b 45%, #0b0908 100%); }
+.stagebox { position: absolute; inset: 0; }
+.stagebox .pm { --pm-w: 520px; --pm-h: 250px; --pm-fs: 19px; }
+.stagebox .cue { position: absolute; left: 50%; translate: -50% 0; bottom: 32px; z-index: 3; display: flex; gap: 10px; align-items: center; padding: 10px 14px; border-radius: 12px; font-size: 13px; color: #fff; white-space: nowrap; }
+.stagebox .cue b { font-weight: 500; }
+.cue .rec { width: 8px; height: 8px; border-radius: 50%; background: #ff453a; }
+@media (min-width: 1024px) and (max-width: 1279px) { .app.ui { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); } .stagebox .pm { --pm-w: 440px; --pm-fs: 17px; } }
+@media (max-width: 1023px) {
+  .app.ui { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+  .app > .app__pane--list { max-height: 300px; }
+  .app > .app__pane + .app__pane { border-left: 0; border-top: 1px solid var(--glass-line); }
+}
+@media (max-width: 639px) {
+  .app.ui { grid-template-rows: minmax(0, 1fr); }
+  .app > .app__pane--list { display: none; }
+  .app > .app__pane + .app__pane { border-top: 0; }
+  .stagebox .pm { --pm-h: 230px; --pm-fs: 16px; }
+}
 
-  ol.steps { list-style: none; counter-reset: s; padding: 0; margin: 0; display: grid; gap: 18px; max-width: 680px; }
-  ol.steps li { counter-increment: s; display: grid; grid-template-columns: 40px 1fr; gap: 14px; align-items: start; color: var(--muted); }
-  ol.steps li::before { content: counter(s); width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line);
-                        display: grid; place-items: center; color: var(--text); font-weight: 600; font-size: 15px; }
-  ol.steps b { color: var(--text); font-weight: 600; }
-  code { font: 14px ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--panel); border: 1px solid var(--line); padding: 2px 7px; border-radius: 6px; color: var(--text); word-break: break-all; }
+/* ---------- Statement ---------- */
+#statement .mo-lt__type { max-width: 9ch; }
+.statement__shot { margin: 0; position: relative; aspect-ratio: 1 / 1; border-radius: var(--r-lg); overflow: hidden; display: grid; place-items: start center;
+  background: radial-gradient(70% 55% at 50% 30%, rgb(255 160 60 / .45), transparent 70%), radial-gradient(90% 60% at 50% 100%, rgb(255 205 120 / .18), transparent), rgb(255 255 255 / .03); }
+.statement__shot img { width: 100%; height: auto; margin-top: -1px; }
+@media (max-width: 1023px) { .statement__shot { aspect-ratio: 16 / 9; margin-top: var(--s-7); } }
+#statement .statement__line { max-width: 46ch; margin-top: var(--s-6); font-size: var(--t-lead); line-height: 1.5; color: var(--ink); }
+#statement .statement__line .muted { color: var(--muted); }
 
-  footer { border-top: 1px solid var(--line); padding: 34px 0 48px; color: var(--muted); font-size: 14px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+/* ---------- Feature cards: glass cards, glass fragments on a painted ground ---------- */
+#features .panel { --p-h: 300px; }
+#features .card { background: var(--glass-fill); border-color: var(--glass-line); box-shadow: var(--glass-hi); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); }
+#features .ui-panel .ui-meta, #features .ui-tg__sub, #features .ui-slider__top { color: #d6d0c6 !important; }
+#features .ui-panel, #features .ui-notify { background: rgb(18 16 13 / .84); border: 1px solid rgb(255 255 255 / .16); box-shadow: inset 0 1px 0 rgb(255 255 255 / .18), 0 24px 50px -20px rgb(0 0 0 / .7);
+  -webkit-backdrop-filter: blur(18px) saturate(170%); backdrop-filter: blur(18px) saturate(170%); color: #fff; }
+.shots { position: absolute; inset: 40px 32px auto; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.shot { border-radius: 12px; overflow: hidden; }
+.shot__label { display: flex; align-items: center; gap: 8px; padding: 10px 12px; font-size: 13px; font-weight: 500; border-bottom: 1px solid rgb(255 255 255 / .12); }
+.shot__label .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--amber); }
+.shot__label .dot--rec { background: #ff453a; }
+.shot__screen { position: relative; height: 210px; }
+.shot { background: radial-gradient(110% 80% at 50% 30%, #2d2014, #0f0c09) !important; }
+.shot__screen .pm { --pm-w: 150px; --pm-h: 74px; --pm-fs: 9px; border-radius: 0 0 12px 12px; box-shadow: none; }
+.shot__screen .pm__cam { top: 4px; width: 5px; height: 5px; margin-left: -2.5px; }
+.pm__lines { position: absolute; inset: 22px 16px auto; display: grid; justify-items: center; gap: 7px; } .pm__lines i { display: block; height: 6px; width: 88%; border-radius: 3px; background: rgb(255 255 255 / .85); } .pm__lines i + i { width: 62%; }
+.shot__screen .pm__roll { animation: none; }
+.shot__notch { position: absolute; top: 0; left: 50%; translate: -50% 0; width: 56px; height: 14px; background: #000; border-radius: 0 0 8px 8px; }
+.shot__win { position: absolute; left: 14px; right: 14px; bottom: 14px; height: 92px; border-radius: 8px; background: rgb(255 255 255 / .08); border: 1px solid rgb(255 255 255 / .1); }
+.shot__win::before, .shot__win::after { content: ""; position: absolute; left: 12px; height: 8px; border-radius: 4px; background: rgb(255 255 255 / .22); }
+.shot__win::before { top: 16px; width: 60%; } .shot__win::after { top: 34px; width: 40%; }
+.glowcard { position: absolute; inset: 40px 32px auto; height: 300px; border-radius: 14px 14px 0 0; overflow: hidden; }
+.glowcard .pm { --pm-w: 100%; width: 100%; --pm-h: 300px; --pm-fs: 17px; border-radius: 14px 14px 0 0; }
+.glowcard .pm__text { inset: 26px 24px 70px; }
+.meter { position: absolute; left: 50%; translate: -50% 0; bottom: 92px; z-index: 3; display: flex; gap: 4px; align-items: end; height: 28px; }
+.meter i { width: 4px; border-radius: 2px; background: rgb(255 219 138 / .9); animation: mt 1.1s ease-in-out infinite; }
+.meter i:nth-child(2n) { animation-duration: .9s; } .meter i:nth-child(3n) { animation-duration: 1.3s; }
+@keyframes mt { 0%, 100% { height: 4px; } 50% { height: 26px; } }
+@media (max-width: 1279px) { .shots { grid-template-columns: 1fr; } .shot + .shot { display: none; } }
+@media (max-width: 639px) { #features .panel { --p-h: 128px; } .shots { inset: 16px 16px auto; } .shot__screen { height: 150px; } .glowcard { inset: 16px 16px auto; } }
 
-  @media (max-width: 640px) {
-    .wrap { padding: 0 16px; }
-    header nav a:first-child { display: none; }
-    .hero { padding-top: 36px; }
-    .grid { grid-template-columns: 1fr; }
-    section { padding: 56px 0; }
-    .stage { aspect-ratio: 4 / 3; }
-    .notch { width: 88%; }
-  }
+/* ---------- Install, on the light band ---------- */
+#install .panel { --p-h: 260px; }
+#install .card { background: rgb(255 255 255 / .55); border-color: rgb(12 11 10 / .1); box-shadow: inset 0 1px 0 rgb(255 255 255 / .9), 0 30px 60px -40px rgb(60 30 0 / .35);
+  -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%); }
+#install .panel { background: linear-gradient(160deg, #f7d9a8, #efc58c 45%, #e8b67a); }
+.mac { position: absolute; left: 28px; right: 28px; top: 36px; border-radius: 12px; color: #1d1b18; font: 400 13px/1.4 var(--font-text);
+  background: rgb(255 255 255 / .62); border: 1px solid rgb(255 255 255 / .8); box-shadow: inset 0 1px 0 #fff, 0 24px 44px -22px rgb(80 40 0 / .5);
+  -webkit-backdrop-filter: blur(16px) saturate(170%); backdrop-filter: blur(16px) saturate(170%); }
+.mac__bar { display: flex; gap: 7px; align-items: center; height: 32px; padding: 0 12px; border-bottom: 1px solid rgb(0 0 0 / .08); }
+.mac__bar i { width: 11px; height: 11px; border-radius: 50%; background: #ff5f57; } .mac__bar i:nth-child(2) { background: #febc2e; } .mac__bar i:nth-child(3) { background: #28c840; }
+.mac__bar b { margin-left: 8px; font-weight: 500; font-size: 13px; line-height: 20px; }
+.dmg { display: flex; align-items: center; justify-content: space-around; padding: 26px 16px 34px; }
+.dmg figure { margin: 0; display: grid; justify-items: center; gap: 8px; font-size: 13px; }
+.dmg img { width: 72px; height: 72px; }
+.folder { width: 72px; height: 58px; margin: 7px 0; border-radius: 8px; background: linear-gradient(#7cc4f7, #3d9be9); position: relative; }
+.folder::before { content: ""; position: absolute; left: 0; top: -7px; width: 30px; height: 12px; border-radius: 5px 5px 0 0; background: #6ab8f2; }
+.dmg__arrow { width: 56px; height: 2px; background: #1d1b18; position: relative; opacity: .5; }
+.dmg__arrow::after { content: ""; position: absolute; right: -1px; top: -4px; border: 5px solid transparent; border-left: 7px solid #1d1b18; border-right: 0; }
+.ps { padding: 16px; display: grid; gap: 12px; }
+.ps__title { font-weight: 500; font-size: 14px; }
+.ps__row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 12px; border-radius: 10px; background: rgb(255 255 255 / .7); border: 1px solid rgb(0 0 0 / .06); }
+.ps__row p { margin: 0; max-width: 24ch; }
+.mbtn { flex: none; padding: 5px 12px; border-radius: 7px; background: #fff; border: 1px solid rgb(0 0 0 / .14); font-size: 13px; font-weight: 500; box-shadow: 0 1px 1px rgb(0 0 0 / .06); }
+.mbtn--blue { color: #0a5ad6; }
+.ask { padding: 20px 18px 18px; display: grid; justify-items: center; text-align: center; gap: 10px; }
+.ask img { width: 52px; height: 52px; }
+.ask strong { font-weight: 500; font-size: 14px; max-width: 26ch; }
+.ask p { margin: 0; font-size: 12px; color: #55524c; max-width: 34ch; }
+.ask__btns { display: flex; gap: 8px; width: 100%; } .ask__btns .mbtn { flex: 1; }
+@media (max-width: 639px) { #install .panel { --p-h: 230px; } .mac { left: 16px; right: 16px; top: 20px; } }
+
+/* ---------- Questions and footer ---------- */
+#questions .q-grid { grid-template-rows: auto 1fr; }
+#questions .q-grid > .q-side { grid-row: 1; grid-column: 1 / span 5; }
+#questions .q-grid > .faq { grid-row: 1 / 3; }
+#questions .q-grid > .icon-tile { grid-row: 2; grid-column: 1 / span 5; align-self: start; }
+.close__word { line-height: 1; }
+@media (min-width: 1024px) and (max-width: 1279px) { #install .grid > .card.span-4 { grid-column: span 4; } #install .grid { grid-template-columns: repeat(12, minmax(0, 1fr)); } }
+@media (min-width: 640px) and (max-width: 1023px) { #install { --h: 2; } #install .panel { --p-h: max(360px, calc((200svh - 960px) / 3)); } #features .panel { --p-h: max(440px, calc(100svh - 560px)); }
+  #questions .wrap { position: relative; } #questions .q-side { padding-right: 180px; } #questions .q-grid > .icon-tile { position: absolute; right: 0; top: 0; margin: 0; } }
+.icon-tile { margin-top: 0; width: 100%; height: 280px; border-radius: var(--r-lg); display: grid; place-items: center; }
+.icon-tile img { width: 168px; height: 168px; }
+@media (max-width: 1023px) { .icon-tile { width: 160px; height: 160px; border-radius: 30px; margin-top: var(--s-5); } .icon-tile img { width: 112px; height: 112px; } }
+@media (max-width: 1023px) { #questions .q-grid > .q-side, #questions .q-grid > .faq, #questions .q-grid > .icon-tile { grid-row: auto; grid-column: 1 / -1; } }
+@media (max-width: 639px) { #questions .q-grid > .icon-tile { width: 100%; height: 480px; border-radius: 24px; margin-top: var(--s-7); } #questions .icon-tile img { width: 160px; height: 160px; } }
+
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <a class="brand" href="./"><img src="icon.png" alt="">EyeLine</a>
-    <nav>
-      <a href="#install">Install</a>
-      <a href="https://github.com/byteKumar/EyeLine">GitHub</a>
+<!-- type: software
+     deal: hero split, nav nav-mega, close close-word, footer footer-dark, rhythm dark-band (#install on .ground-inverse), buttons solid, mark ring (replaced by the client's own icon), grounds: bg-band (#app) and bg-halo (#questions) dropped, see the report
+     palette: the client's own colours through start.mjs brand (black and the amber of the app's glow), type geist, radius round
+     effect: grain-gradient in the hero frame; card grounds painterly-landscape (#features)
+     moments: liquid-type (#statement)
+     glass: frosted panels, nav and cards on the client's brief; waived rules listed in the report -->
+
+<header class="nav">
+  <div class="wrap nav__bar">
+    <a class="skip-link" href="#top">Skip to content</a>
+    <a class="nav__logo" href="#top"><img src="icon-56.png" alt="" width="28" height="28" style="width:28px;height:28px">EyeLine</a>
+    <nav class="nav__links" aria-label="Main">
+      <div class="nav__item">
+        <a class="nav__link" href="#app">Product <svg class="chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <div class="nav__menu">
+          <div class="wrap grid">
+            <div class="menu-col span-3">
+              <p class="t-label">The prompter</p>
+              <a href="#app">Script window<span>Paste, set speed and size</span></a>
+              <a href="#features">Voice glow<span>Lights up as you talk</span></a>
+              <a href="#features">Voice pacing<span>Scrolls only while you speak</span></a>
+            </div>
+            <div class="menu-col span-3">
+              <p class="t-label">Privacy</p>
+              <a href="#features">Hidden from capture<span>Kept out of shared screens</span></a>
+              <a href="#questions">No recording<span>Reads loudness, saves nothing</span></a>
+            </div>
+            <a class="menu-card span-3 start-10" href="#install">
+              <div class="panel"><img class="frame__img" src="prompter.png" alt="The EyeLine prompter with its glow lit" width="640" height="304" loading="lazy" style="object-fit:contain;background:radial-gradient(70% 70% at 50% 30%, #4a2c10, #120c07)"></div>
+              <span class="t-card">Version 1.0</span>
+              <span class="t-small muted">One build for every Mac</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="nav__item"><a class="nav__link" href="#features">Features</a></div>
+      <div class="nav__item"><a class="nav__link" href="#install">Install</a></div>
+      <div class="nav__item"><a class="nav__link" href="#questions">Questions</a></div>
     </nav>
-  </header>
+    <div class="nav__actions">
+      <a class="nav__link" href="https://github.com/byteKumar/EyeLine">GitHub</a>
+      <a class="btn btn--primary" href="https://github.com/byteKumar/EyeLine/releases/latest/download/EyeLine.dmg">Download for Mac</a>
+    </div>
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-label="Menu">
+      <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 5h14M2 13h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</header>
 
-  <div class="hero">
-    <h1>Read your script. Keep your eyes on them.</h1>
-    <p class="lede">EyeLine is a teleprompter that hangs from your MacBook's notch, right under the camera. Your audience sees you looking at them. They never see the script.</p>
-    <a class="cta" href="https://github.com/byteKumar/EyeLine/releases/latest/download/EyeLine.dmg">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0 4.5-4.5M12 15l-4.5-4.5M5 20h14"/></svg>
-      Download for Mac
-    </a>
-    <p class="fine">Free and open source · macOS 14 or later · Apple silicon and Intel</p>
+<main id="top">
+  <section class="hero hero--split" data-enter aria-labelledby="hero-h">
+    <div class="wrap"><div class="hero-text grid hero__grid">
+      <div class="hero__text span-5">
+        <p class="hero__kicker"><span class="dot" aria-hidden="true"></span>Version 1.0, free and open source</p>
+        <h1 id="hero-h">A teleprompter in your Mac&rsquo;s notch</h1>
+        <p class="hero__lead">EyeLine hangs your script from the notch, right below the lens, so you read while looking at the call. 790 KB, for macOS 14 or later.</p>
+        <div class="btn-row"><a class="btn btn--primary" href="https://github.com/byteKumar/EyeLine/releases/latest/download/EyeLine.dmg">Download for Mac<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a><a class="btn btn--secondary" href="https://github.com/byteKumar/EyeLine">See the source</a></div>
+      </div>
+      <div class="hero__media hero-screen span-6 start-7" data-pm-host role="img" aria-label="The top of a MacBook screen: the EyeLine prompter hangs from the notch and scrolls a script, its glow lit under the words">
+        <div data-fx="grain-gradient" data-fx-seed="11" data-fx-params='{"speed":0.35,"warp":0.7,"contrast":0.6,"calmX":0.5,"calmY":0.2}' data-fx-palette='{"bg":"#120c07","surface":"#3a2210","ink":"#ffd48a","muted":"#a8622a","accent":"#ff9d3c"}'></div>
+        <div class="menubar glass" aria-hidden="true"><span><span>Keynote</span><span>File</span><span>Edit</span><span>Play</span></span><span><span>EyeLine</span><span>Mon 9:41</span></span></div>
+        <div class="pm ui ui-pm" aria-hidden="true">
+          <span class="pm__cam"></span>
+          <div class="pm__text"><div role="img" aria-label="Script lines scrolling" class="pm__roll">
+            <p>Thanks for joining, everyone.</p>
+            <p>Today I'll walk you through what we shipped this month.</p>
+            <p>First, the new sign-up flow. Fewer steps, fewer drop-offs.</p>
+            <p>Second, search. Results now load while you type.</p>
+            <p>And third, the part I'm most excited about.</p>
+            <p>Let me share my screen.</p>
+            <p>Thanks for joining, everyone.</p>
+            <p>Today I'll walk you through what we shipped this month.</p>
+          </div></div>
+          <span class="pm__glow"></span>
+        </div>
+        <div class="slidewin glass" aria-hidden="true"><div class="slidewin__bar"><i></i><i></i><i></i><b>Product update.key</b></div><div class="slidewin__body"><strong>What we shipped this month</strong><span></span><span></span></div></div>
+        <div class="ly-float" aria-hidden="true">
+          <div class="ly-float__row"><span class="ly-live">Sharing screen</span><span>00:14</span></div>
+          <div class="ly-float__title">Viewers see your slides, not the script</div>
+        </div>
+        <button class="pm-pause glass" type="button" aria-label="Pause the preview"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 2h3v10H3zM8 2h3v10H8z"/></svg></button>
+      </div>
+    </div></div>
+  </section>
 
-    <div class="stage" aria-label="Animated preview of the prompter under the camera">
-      <div class="notch">
-        <span class="cam"></span>
-        <div class="glow"></div>
-        <div class="script">
-          <p>Hi everyone, thanks for joining.</p>
-          <p>Today I want to walk you through three things we shipped this month.</p>
-          <p>First, the new onboarding flow. Sign-ups are up and drop-off is down.</p>
-          <p>Second, the faster search. Results now load in under a second.</p>
-          <p>And third, the part I'm most excited about.</p>
-          <p>Let me share my screen.</p>
+  <section class="section" id="app" aria-labelledby="app-h">
+    <div class="wrap">
+      <div class="grid grid--top">
+        <h2 class="span-5" id="app-h">EyeLine&rsquo;s script window and prompter</h2>
+        <p class="span-6 start-7" style="font-size:var(--t-lead);line-height:1.5;margin:0">Paste a script from the menu bar, set the speed and the text size, and the panel under the notch scrolls it. Click the words to pause, scroll on them to go back. <a class="link" href="#install">See install steps</a></p>
+      </div>
+      <div class="ui app fill" role="img" aria-label="EyeLine's Script and Settings window beside the prompter it drives, scrolling under the notch" data-pm-host>
+        <div class="app__pane app__pane--list">
+          <div class="set ui ui-set" role="img" aria-label="Script and Settings window">
+            <div class="set__bar"><i></i><i></i><i></i><b>EyeLine</b></div>
+            <div class="set__head"><strong>Script</strong><span>112 words · about 45 sec spoken</span></div>
+            <div class="set__doc"><div role="img" aria-label="The script text">
+              <p>Thanks for joining, everyone. Today I'll walk you through what we shipped this month.</p>
+              <p>First, the new sign-up flow. Fewer steps, fewer drop-offs.</p>
+              <p>Second, search. Results now load while you type.</p>
+              <p>And third, the part I'm most excited about.</p>
+            </div></div>
+            <div class="set__btns"><span>Pause</span><span>Restart</span><span>Hide Prompter</span></div>
+            <div class="set__row"><span>Scroll speed</span><span class="trk" style="--v:22%"></span><em>32 pt/s</em></div>
+            <div class="set__row"><span>Text size</span><span class="trk" style="--v:18%"></span><em>17 pt</em></div>
+            <div class="set__tg" style="margin-top:8px"><span>Voice glow</span><span class="sw on"></span></div>
+            <div class="set__tg"><span>Scroll only while I'm speaking</span><span class="sw"></span></div>
+            <div class="set__tg"><span>Show in screen shares and recordings</span><span class="sw"></span></div>
+          </div>
+        </div>
+        <div class="app__pane app__pane--open">
+          <div class="stagebox">
+            <div class="pm ui ui-pm">
+              <span class="pm__cam"></span>
+              <div class="pm__text"><div role="img" aria-label="Script lines scrolling" class="pm__roll" style="animation-duration:34s">
+                <p>Thanks for joining, everyone.</p>
+                <p>Today I'll walk you through what we shipped this month.</p>
+                <p>First, the new sign-up flow. Fewer steps, fewer drop-offs.</p>
+                <p>Second, search. Results now load while you type.</p>
+                <p>And third, the part I'm most excited about.</p>
+                <p>Let me share my screen.</p>
+                <p>Thanks for joining, everyone.</p>
+                <p>Today I'll walk you through what we shipped this month.</p>
+              </div></div>
+              <span class="pm__glow"></span>
+            </div>
+            <div class="cue glass"><span class="rec"></span><b>Recording</b><span>The prompter stays off the video</span></div>
+          </div>
+          <button class="pm-pause glass" type="button" aria-label="Pause the preview"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 2h3v10H3zM8 2h3v10H8z"/></svg></button>
         </div>
       </div>
     </div>
-  </div>
-</div>
+  </section>
 
-<section>
+  <section class="section" id="statement" aria-labelledby="statement-h">
+    <div class="wrap">
+      <div class="grid grid--top">
+        <div class="span-6" data-moment="liquid-type" data-moment-opts='{"strength": 0.9}'>
+          <h2 class="mo-lt__type" id="statement-h">Your eyes stay on the lens</h2>
+          <p class="statement__line">A script in a second window pulls your gaze off the camera, and viewers notice. EyeLine keeps the words right below it.</p>
+        </div>
+        <figure class="frame statement__shot glass span-6 start-7"><img src="prompter.png" alt="The EyeLine prompter as the app draws it: the script in white on black, the voice glow lit under it" width="640" height="304" loading="lazy" data-source="client" data-subject="the EyeLine prompter"></figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section g2" id="features" aria-labelledby="features-h">
+    <div class="wrap">
+      <div class="group">
+        <div class="section-head">
+          <h2 id="features-h">What EyeLine does. <span class="muted">Four things, all from the menu bar.</span></h2>
+        </div>
+        <div class="grid">
+          <article class="card card--row span-6 m-nolift">
+            <h3>Stays out of screen shares</h3>
+            <p>macOS keeps the prompter out of screenshots, recordings and shared screens.</p>
+            <div class="panel" data-fx="painterly-landscape" data-fx-seed="21">
+              <div class="shots" aria-hidden="true">
+                <div class="shot ui ui-shot"><div class="shot__label"><span class="dot"></span>Your screen</div><div class="shot__screen"><div class="pm ui ui-pm"><span class="pm__cam"></span><span class="pm__lines"><i></i><i></i></span></div><div class="shot__win"></div></div></div>
+                <div class="shot ui ui-shot"><div class="shot__label"><span class="dot dot--rec"></span>What viewers see</div><div class="shot__screen"><span class="shot__notch"></span><div class="shot__win"></div></div></div>
+              </div>
+            </div>
+          </article>
+          <article class="card card--row span-6 m-nolift">
+            <h3>Glows while you speak</h3>
+            <p>A warm light under the text rises with your voice and fades when you stop.</p>
+            <div class="panel" data-fx="painterly-landscape" data-fx-seed="34" data-pm-host>
+              <div class="glowcard" aria-hidden="true">
+                <div class="pm ui ui-pm"><div class="pm__text"><div role="img" aria-label="Script lines scrolling" class="pm__roll" style="animation:none"><p>And third, the part I'm most excited about.</p><p>Let me share my screen.</p></div></div><span class="pm__glow"></span></div>
+                <div class="meter"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              </div>
+              <button class="pm-pause glass" type="button" aria-label="Pause the glow"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 2h3v10H3zM8 2h3v10H8z"/></svg></button>
+            </div>
+          </article>
+        </div>
+      </div>
+      <div class="grid">
+        <article class="card card--row span-6 m-nolift">
+          <h3>Waits when you pause</h3>
+          <p>With voice pacing on, the script moves only while you talk, never during a breath.</p>
+          <div class="panel" data-fx="painterly-landscape" data-fx-seed="47">
+            <div class="stage stage--fade-b"><div class="at-corner" style="--ax:32px;--ay:40px">
+              <div class="ui ui-panel ui-toggles" data-ui="toggles">
+                <div class="ui-head">
+                  <svg class="ui-icon ui-toggles__ico" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2.5v7M5.5 6.5v1.5a2.5 2.5 0 0 0 5 0V6.5M8 10.5v3"/></svg>
+                  <div class="ui-title">Microphone</div>
+                  <span class="ui-spacer"></span>
+                  
+                </div>
+                <ul class="ui-toggles__list">
+                  <li class="ui-tg"><span class="ui-tg__text"><span class="ui-tg__label">Voice glow</span><span class="ui-tg__sub">Light under the text follows your voice</span></span><button class="ui-switch is-on" type="button" role="switch" aria-checked="true" aria-label="Voice glow"><i></i></button></li>
+                  <li class="ui-tg"><span class="ui-tg__text"><span class="ui-tg__label">Scroll only while I'm speaking</span><span class="ui-tg__sub">Stops between sentences</span></span><button class="ui-switch is-on" type="button" role="switch" aria-checked="true" aria-label="Scroll only while I'm speaking"><i></i></button></li>
+                  <li class="ui-tg"><span class="ui-tg__text"><span class="ui-tg__label">Show in screen shares</span><span class="ui-tg__sub">For recording a demo of EyeLine</span></span><button class="ui-switch" type="button" role="switch" aria-checked="false" aria-label="Show in screen shares"><i></i></button></li>
+                </ul>
+              </div>
+            </div></div>
+          </div>
+        </article>
+        <article class="card card--row span-6 m-nolift">
+          <h3>Resizes around the camera</h3>
+          <p>Drag the corner and the panel grows from the notch, centred on the lens.</p>
+          <div class="panel" data-fx="painterly-landscape" data-fx-seed="58">
+            <div class="stage stage--fade-b"><div class="at-rise fit" style="--fit-max:288px;--ax:max(24px, 50% - 144px);--ay:40px">
+              <div class="ui ui-panel ui-slider" data-ui="slider">
+                <div class="ui-slider__head">
+                  <span class="ui-slider__ico" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 3h10v6H3z" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M6 12h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+                  <span class="ui-slider__name"><span class="ui-title">Prompter</span><span class="ui-meta">Script &amp; Settings</span></span>
+                  <span class="ui-spacer"></span>
+                  <span class="ui-slider__reset">Reset</span>
+                </div>
+                <div class="ui-slider__row">
+                  <div class="ui-slider__top"><span>Text size</span><output>17 pt</output></div>
+                  <div class="ui-slider__track" style="--v:0.18"><i class="ui-slider__fill"></i><i class="ui-slider__thumb"></i></div>
+                </div>
+                <div class="ui-slider__row">
+                  <div class="ui-slider__top"><span>Scroll speed</span><output>32 pt/s</output></div>
+                  <div class="ui-slider__track" style="--v:0.16"><i class="ui-slider__fill"></i><i class="ui-slider__thumb"></i></div>
+                </div>
+                <div class="ui-slider__seg" role="group" aria-label="Panel width">
+                  <span>320</span><span class="is-on">380</span><span>520</span>
+                </div>
+              </div>
+            </div></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section ground-inverse" id="install" style="--hm: 2" aria-labelledby="install-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="install-h">Install EyeLine in 3 steps</h2>
+        <p>This first build is not notarized by Apple yet, so macOS asks you to allow it once.</p>
+      </div>
+      <div class="grid">
+        <article class="card card--row span-4 m-nolift">
+          <span class="step-num">1</span>
+          <h3>Drag it to Applications</h3>
+          <p>Open EyeLine.dmg and drop the app on the Applications folder.</p>
+          <div class="panel">
+            <div class="mac ui ui-mac" aria-hidden="true">
+              <div class="mac__bar"><i></i><i></i><i></i><b>EyeLine</b></div>
+              <div class="dmg"><figure><img src="icon-144.png" alt="" width="72" height="72" loading="lazy">EyeLine</figure><span class="dmg__arrow"></span><figure><span class="folder"></span>Applications</figure></div>
+            </div>
+          </div>
+        </article>
+        <article class="card card--row span-4 m-nolift">
+          <span class="step-num">2</span>
+          <h3>Allow it in System Settings</h3>
+          <p>Under Privacy &amp; Security, click Open Anyway next to EyeLine.</p>
+          <div class="panel">
+            <div class="mac ui ui-mac" aria-hidden="true">
+              <div class="mac__bar"><i></i><i></i><i></i><b>Settings</b></div>
+              <div class="ps"><span class="ps__title">Security</span><div class="ps__row"><p>“EyeLine” was blocked to protect your Mac.</p><span class="mbtn">Open Anyway</span></div></div>
+            </div>
+          </div>
+        </article>
+        <article class="card card--row span-4 m-nolift">
+          <span class="step-num">3</span>
+          <h3>Turn on the microphone</h3>
+          <p>Allow it when asked. It powers the glow and voice pacing.</p>
+          <div class="panel">
+            <div class="mac ui ui-mac" aria-hidden="true">
+              <div class="ask"><img src="icon-144.png" alt="" width="52" height="52" loading="lazy"><strong>“EyeLine” would like to access the microphone.</strong><p>EyeLine listens to how loud you are speaking. Audio is never recorded.</p><div class="ask__btns"><span class="mbtn">Don’t Allow</span><span class="mbtn mbtn--blue">Allow</span></div></div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="questions" style="--hm: 2" aria-labelledby="questions-h">
+    <div class="wrap">
+      <div class="grid grid--top q-grid">
+        <div class="span-5 stack-4 q-side">
+          <h2 id="questions-h">Questions</h2>
+          <p class="muted" style="font-size:var(--t-lead);line-height:1.5;margin:0">Something else? Open an issue on GitHub.</p>
+          <p><a class="link" href="https://github.com/byteKumar/EyeLine/issues">Open an issue</a></p>
+        </div>
+        <div class="faq span-6 start-7">
+          <div class="faq__item"><h3>Will people on my call see EyeLine?</h3><p>No. EyeLine asks macOS to keep its window out of screen capture. Try one test call in your meeting app before a big talk.</p></div>
+          <div class="faq__item"><h3>Does EyeLine record my voice?</h3><p>No. It reads how loud the microphone is, many times a second, and keeps nothing. The glow and pacing work from that number alone.</p></div>
+          <div class="faq__item"><h3>Why does macOS warn me when I open it?</h3><p>Version 1.0 is not notarized by Apple yet. Click Open Anyway in Privacy &amp; Security once and it opens normally after that.</p></div>
+          <div class="faq__item"><h3>My Mac has no notch. Does it still work?</h3><p>Yes. The panel hangs from the top edge of the screen, under the menu bar, in the same place.</p></div>
+          <div class="faq__item"><h3>Which Macs can run it?</h3><p>Any Mac on macOS 14 Sonoma or later. One download runs on Apple silicon and Intel.</p></div>
+        </div>
+        <div class="icon-tile glass span-5"><img src="icon-336.png" alt="The EyeLine app icon" width="168" height="168" loading="lazy"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer closing footer--dark ground-inverse g2m" id="contact" aria-labelledby="close-h">
   <div class="wrap">
-    <h2>Everything a prompter needs, nothing in your way.</h2>
-    <div class="grid">
-      <div><h3><span class="dot"></span>Right under the lens</h3><p>The panel grows out of the notch, so the words sit next to your camera and your gaze stays on the call.</p></div>
-      <div><h3><span class="dot"></span>Hidden when you share</h3><p>It asks macOS to keep it out of screen capture. Share your screen or record a video and the prompter isn't in it.</p></div>
-      <div><h3><span class="dot"></span>A glow that listens</h3><p>Soft light at the bottom rises as you speak and fades when you pause. Only loudness is measured; nothing is recorded.</p></div>
-      <div><h3><span class="dot"></span>Moves at your pace</h3><p>Pick a speed, or let it scroll only while you talk. Click to pause, scroll to rewind, drag the corner to resize.</p></div>
+    <div class="closing__cta close--word">
+      <div class="section-head--split">
+        <div><h2 id="close-h">Download EyeLine for your Mac</h2><p class="t-lead">Free and MIT licensed. 790 KB, macOS 14 or later.</p></div>
+        <a class="btn btn--primary" href="https://github.com/byteKumar/EyeLine/releases/latest/download/EyeLine.dmg">Download for Mac<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
+      </div>
+      <p class="close__word" aria-hidden="true">EyeLine</p>
+    </div>
+    <div class="closing__links">
+      <div class="grid">
+        <div class="span-4 stack-4">
+          <a class="nav__logo" href="#top"><img src="icon-56.png" alt="" width="28" height="28" loading="lazy" style="width:28px;height:28px">EyeLine</a>
+          <p class="footer__lede">A teleprompter that hangs from the notch of your Mac.</p>
+        </div>
+        <div class="span-2 footer__col"><h3>Product</h3><ul><li><a href="#app">Script window</a></li><li><a href="#features">Features</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Help</h3><ul><li><a href="#install">Install</a></li><li><a href="#questions">Questions</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Source</h3><ul><li><a href="https://github.com/byteKumar/EyeLine">GitHub</a></li><li><a href="https://github.com/byteKumar/EyeLine/releases">Releases</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>License</h3><ul><li><a href="https://github.com/byteKumar/EyeLine/blob/main/LICENSE">MIT license</a></li><li><a href="https://github.com/byteKumar/EyeLine/issues">Issues</a></li></ul></div>
+      </div>
+      <div class="footer__legal">
+        <span>&copy; 2026 EyeLine</span>
+        <div class="socials"></div>
+      </div>
     </div>
   </div>
-</section>
+</footer>
 
-<section id="install">
-  <div class="wrap">
-    <h2>Install in a minute.</h2>
-    <ol class="steps">
-      <li><span><b>Download</b> <a href="https://github.com/byteKumar/EyeLine/releases/latest/download/EyeLine.dmg">EyeLine.dmg</a>, open it and drag EyeLine into Applications.</span></li>
-      <li><span><b>Open it once.</b> This early build isn't notarized by Apple yet, so macOS will stop it. Go to System Settings, then Privacy &amp; Security, and click <b>Open Anyway</b>. Or run <code>xattr -dr com.apple.quarantine /Applications/EyeLine.app</code></span></li>
-      <li><span><b>Allow the microphone</b> for the voice glow, then paste your script from the menu bar icon.</span></li>
-    </ol>
-  </div>
-</section>
-
-<div class="wrap">
-  <footer>
-    <span>EyeLine · MIT licensed</span>
-    <span><a href="https://github.com/byteKumar/EyeLine">Source on GitHub</a> · <a href="https://github.com/byteKumar/EyeLine/releases">Releases</a></span>
-  </footer>
-</div>
+<script>
+  // pause the drawn previews (each runs past 5 s)
+  document.querySelectorAll('.pm-pause').forEach(b => b.addEventListener('click', () => {
+    const host = b.closest('[data-pm-host]') || b.parentElement;
+    const p = host.classList.toggle('is-paused');
+    b.setAttribute('aria-label', p ? 'Play the preview' : 'Pause the preview');
+    b.innerHTML = p ? '<svg viewBox="0 0 14 14" aria-hidden="true"><path d="M4 2l8 5-8 5z"/></svg>' : '<svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 2h3v10H3zM8 2h3v10H8z"/></svg>';
+  }));
+</script>
+<script type="module" src="assets/system.js"></script>
+<script type="module" src="assets/motion/motion.js"></script>
+<script type="module" src="assets/layout/layout.js"></script>
 </body>
 </html>
